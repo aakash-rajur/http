@@ -421,6 +421,18 @@ func main() {
 	}
 }
 
+type Book struct {
+	Id          int64  `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+type User struct {
+	Id    int64  `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Email string `json:"email,omitempty"`
+}
+
 func loadFromOS() Env {
 	env := make(Env)
 
@@ -443,16 +455,4 @@ func (e Env) Get(key string, defaultValue string) string {
 	}
 
 	return value
-}
-
-type Book struct {
-	Id          int64  `json:"id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-}
-
-type User struct {
-	Id    int64  `json:"id,omitempty"`
-	Name  string `json:"name,omitempty"`
-	Email string `json:"email,omitempty"`
 }
