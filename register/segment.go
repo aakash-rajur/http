@@ -28,19 +28,23 @@ func segmentsFromPath(pattern string) segments {
 type segments []segment
 
 func (s segments) params(other segments) params.Params {
-	params := make(params.Params)
+	p := make(params.Params)
 
 	for index, each := range s {
 		if !each.isParam() {
 			continue
 		}
 
+		if index >= len(other) {
+			break
+		}
+
 		key, value := each.name(), other[index]
 
-		params[key] = string(value)
+		p[key] = string(value)
 	}
 
-	return params
+	return p
 }
 
 func (s segments) cmp(other segments, start int) (int, int) {
@@ -72,6 +76,10 @@ func (s segment) isParam() bool {
 }
 
 func (s segment) name() string {
+	if !s.isParam() {
+		return ""
+	}
+
 	return string(s[1:])
 }
 
