@@ -19,6 +19,10 @@ func (p Params) WithinContext(ctx context.Context) context.Context {
 }
 
 func FromContext(ctx context.Context) (Params, bool) {
+	if ctx == nil {
+		return nil, false
+	}
+
 	p, ok := ctx.Value(paramsKey).(Params)
 
 	return p, ok
