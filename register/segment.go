@@ -72,6 +72,10 @@ func (s segments) cmp(other segments, start int) (int, int) {
 type segment string
 
 func (s segment) isParam() bool {
+	if len(s) == 0 {
+		return false
+	}
+
 	return s[0] == ':'
 }
 

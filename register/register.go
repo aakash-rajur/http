@@ -2,7 +2,7 @@ package register
 
 import (
 	"errors"
-	http2 "github.com/aakash-rajur/http/params"
+	p "github.com/aakash-rajur/http/params"
 	"net/http"
 	"slices"
 )
@@ -35,7 +35,11 @@ func (r Register) Add(pattern string, handler http.Handler) Register {
 	return updated
 }
 
-func (r Register) Find(pattern string) (Entry, http2.Params, error) {
+func (r Register) Find(pattern string) (Entry, p.Params, error) {
+	if len(r) == 0 {
+		return Entry{}, p.Params{}, ErrNotFound
+	}
+
 	safePath := cleanPath(pattern)
 
 	ss := segmentsFromPath(safePath)
