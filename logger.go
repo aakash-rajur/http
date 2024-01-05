@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -18,7 +19,25 @@ func Logger(config LoggerConfig) Middleware {
 }
 
 func saneConfig(in LoggerConfig) LoggerConfig {
-	out := LoggerConfig{}
+	out := LoggerConfig{
+		Output:          os.Stdout,
+		LogFormat:       "%v | HTTP/%d | %4d | %18v | %20s | %20s | %15s | %7s %-7s \n",
+		TimestampFormat: time.DateTime,
+		LogFormatter: func(config LoggerConfig, params LogFormatterParams) string {
+			return fmt.Sprintf(
+				config.LogFormat,
+				params.Timestamp.Format(config.TimestampFormat),
+				params.ProtocolVersion,
+				params.StatusCode,
+				params.Latency,
+				params.RequestContentType,
+				params.ResponseContentType,
+				params.ClientIP,
+				params.Method,
+				params.Path,
+			)
+		},
+	}
 
 	if in.Output != nil {
 		out.Output = in.Output
