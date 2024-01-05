@@ -21,7 +21,7 @@ func Logger(config LoggerConfig) Middleware {
 func saneConfig(in LoggerConfig) LoggerConfig {
 	out := LoggerConfig{
 		Output:          os.Stdout,
-		LogFormat:       "%v | HTTP/%d | %4d | %18v | %20s | %20s | %15s | %7s %-7s \n",
+		LogFormat:       "%v | HTTP/%d | %4d | %10v | %30s | %30s | %15s | %7s %-7s \n",
 		TimestampFormat: time.DateTime,
 		LogFormatter: func(config LoggerConfig, params LogFormatterParams) string {
 			return fmt.Sprintf(
