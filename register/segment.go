@@ -76,7 +76,9 @@ func (s segment) isParam() bool {
 		return false
 	}
 
-	return s[0] == ':'
+	isParam := s[0] == '{' && s[len(s)-1] == '}'
+
+	return isParam
 }
 
 func (s segment) name() string {
@@ -84,7 +86,7 @@ func (s segment) name() string {
 		return ""
 	}
 
-	return string(s[1:])
+	return string(s[1 : len(s)-1])
 }
 
 func (s segment) cmp(other segment) int {

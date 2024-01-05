@@ -142,7 +142,7 @@ func Test_segment_isParam(t *testing.T) {
 		{
 			"test_segment_isParam_1",
 			fields{
-				s: ":test",
+				s: "{test}",
 			},
 			true,
 		},
@@ -180,7 +180,7 @@ func Test_segment_name(t *testing.T) {
 		{
 			"test_segment_name_1",
 			fields{
-				s: ":test",
+				s: "{test}",
 			},
 			"test",
 		},
@@ -228,13 +228,13 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_2",
 			segment("test"),
 			args{
-				other: segment(":test"),
+				other: segment("{test}"),
 			},
-			1,
+			-1,
 		},
 		{
 			"test_segment_cmp_3",
-			segment(":test"),
+			segment("{test}"),
 			args{
 				other: segment("test"),
 			},
@@ -242,41 +242,41 @@ func Test_segment_cmp(t *testing.T) {
 		},
 		{
 			"test_segment_cmp_4",
-			segment(":test"),
+			segment("{test}"),
 			args{
-				other: segment(":test"),
+				other: segment("{test}"),
 			},
 			0,
 		},
 		{
 			"test_segment_cmp_5",
-			segment(":test"),
+			segment("{test}"),
 			args{
-				other: segment(":test2"),
+				other: segment("{test2}"),
 			},
 			0,
 		},
 		{
 			"test_segment_cmp_6",
-			segment(":test2"),
+			segment("{test2}"),
 			args{
-				other: segment(":test"),
+				other: segment("{test}"),
 			},
 			0,
 		},
 		{
 			"test_segment_cmp_7",
-			segment(":test2"),
+			segment("{test2}"),
 			args{
-				other: segment(":test2"),
+				other: segment("{test2}"),
 			},
 			0,
 		},
 		{
 			"test_segment_cmp_8",
-			segment(":test2"),
+			segment("{test2}"),
 			args{
-				other: segment(":test3"),
+				other: segment("{test3}"),
 			},
 			0,
 		},
@@ -411,7 +411,7 @@ func Test_segments_cmp(t *testing.T) {
 		},
 		{
 			name: "test_segments_cmp_13",
-			s:    segments{":arg1", "test", ":arg2"},
+			s:    segments{"{arg1}", "test", ":arg2"},
 			args: args{
 				other: segments{"test", "test"},
 				start: 0,
@@ -420,7 +420,7 @@ func Test_segments_cmp(t *testing.T) {
 		},
 		{
 			name: "test_segments_cmp_14",
-			s:    segments{":arg1", ":arg2", ":arg3"},
+			s:    segments{"{arg1}", "{arg2}", "{arg3}"},
 			args: args{
 				other: segments{"test", "test", "test"},
 				start: 0,
@@ -485,7 +485,7 @@ func Test_segments_params(t *testing.T) {
 		},
 		{
 			name: "test_segments_params_4",
-			s:    segments{":arg1", ":arg2", ":arg3"},
+			s:    segments{"{arg1}", "{arg2}", "{arg3}"},
 			args: args{
 				other: segments{"test", "test", "test"},
 			},
@@ -497,7 +497,7 @@ func Test_segments_params(t *testing.T) {
 		},
 		{
 			name: "test_segments_params_5",
-			s:    segments{":arg1", ":arg2", ":arg3"},
+			s:    segments{"{arg1}", "{arg2}", "{arg3}"},
 			args: args{
 				other: segments{"test", "test", "test", "test"},
 			},
@@ -509,7 +509,7 @@ func Test_segments_params(t *testing.T) {
 		},
 		{
 			name: "test_segments_params_6",
-			s:    segments{":arg1", ":arg2", ":arg3"},
+			s:    segments{"{arg1}", "{arg2}", "{arg3}"},
 			args: args{
 				other: segments{"test", "test"},
 			},

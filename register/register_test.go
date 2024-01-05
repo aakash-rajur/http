@@ -102,7 +102,7 @@ func TestRegister_Add(t *testing.T) {
 				},
 			},
 			args: args{
-				pattern: "/api/:id",
+				pattern: "/api/{id}",
 				handler: nil,
 			},
 			want: Register{
@@ -115,7 +115,7 @@ func TestRegister_Add(t *testing.T) {
 					Handler:  nil,
 				},
 				{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 			},
@@ -132,12 +132,12 @@ func TestRegister_Add(t *testing.T) {
 					Handler:  nil,
 				},
 				{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 			},
 			args: args{
-				pattern: "/api/:id",
+				pattern: "/api/{id}",
 				handler: nil,
 			},
 			want: Register{
@@ -150,11 +150,11 @@ func TestRegister_Add(t *testing.T) {
 					Handler:  nil,
 				},
 				{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 				{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 			},
@@ -235,7 +235,7 @@ func TestRegister_Find(t *testing.T) {
 					Handler:  nil,
 				},
 				{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 			},
@@ -244,7 +244,7 @@ func TestRegister_Find(t *testing.T) {
 			},
 			want: want{
 				entry: Entry{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 				params: params.Params{
@@ -265,7 +265,7 @@ func TestRegister_Find(t *testing.T) {
 					Handler:  nil,
 				},
 				{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 			},
@@ -274,7 +274,7 @@ func TestRegister_Find(t *testing.T) {
 			},
 			want: want{
 				entry: Entry{
-					segments: segments{"api", ":id"},
+					segments: segments{"api", "{id}"},
 					Handler:  nil,
 				},
 				params: params.Params{
