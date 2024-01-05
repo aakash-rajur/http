@@ -129,7 +129,7 @@ func main() {
 	)
 
 	router.GetFunc(
-		"/api/v2/books/:id",
+		"/api/v2/books/{id}",
 		func(w http.ResponseWriter, r *http.Request) {
 			p, ok := params.FromContext(r.Context())
 
@@ -185,7 +185,7 @@ func main() {
 	)
 
 	router.GetFunc(
-		"/api/v2/users/:id",
+		"/api/v2/users/{id}",
 		func(w http.ResponseWriter, r *http.Request) {
 			p, ok := params.FromContext(r.Context())
 
@@ -224,7 +224,7 @@ func main() {
 	)
 
 	router.GetFunc(
-		"/api/v2/users/:id/books",
+		"/api/v2/users/{id}/books",
 		func(w http.ResponseWriter, r *http.Request) {
 			p, ok := params.FromContext(r.Context())
 
@@ -289,7 +289,7 @@ func main() {
 	)
 
 	router.GetFunc(
-		"/identity/:id",
+		"/identity/{id}",
 		func(w http.ResponseWriter, r *http.Request) {
 			p, ok := params.FromContext(r.Context())
 
