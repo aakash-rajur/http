@@ -23,20 +23,7 @@ func saneConfig(in LoggerConfig) LoggerConfig {
 		Output:          os.Stdout,
 		LogFormat:       "%v | HTTP/%d | %4d | %10v | %30s | %30s | %15s | %7s %-7s \n",
 		TimestampFormat: time.DateTime,
-		LogFormatter: func(config LoggerConfig, params LogFormatterParams) string {
-			return fmt.Sprintf(
-				config.LogFormat,
-				params.Timestamp.Format(config.TimestampFormat),
-				params.ProtocolVersion,
-				params.StatusCode,
-				params.Latency,
-				params.RequestContentType,
-				params.ResponseContentType,
-				params.ClientIP,
-				params.Method,
-				params.Path,
-			)
-		},
+		LogFormatter:    defaultLogFormatter,
 	}
 
 	if in.Output != nil {
@@ -77,8 +64,6 @@ func log(
 	if ok {
 		statusCode = hw.StatusCode
 	}
-
-	hw.Header().Get("Content-Type")
 
 	clientIps := make([]string, 0)
 
@@ -142,6 +127,21 @@ func log(
 	}
 
 	_, _ = fmt.Fprint(cfg.Output, cfg.LogFormatter(cfg, params))
+}
+
+func defaultLogFormatter(config LoggerConfig, params LogFormatterParams) string {
+	return fmt.Sprintf(
+		config.LogFormat,
+		params.Timestamp.Format(config.TimestampFormat),
+		params.ProtocolVersion,
+		params.StatusCode,
+		params.Latency,
+		params.RequestContentType,
+		params.ResponseContentType,
+		params.ClientIP,
+		params.Method,
+		params.Path,
+	)
 }
 
 type LoggerConfig struct {
