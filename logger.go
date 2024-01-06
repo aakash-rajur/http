@@ -20,22 +20,12 @@ func Logger(config LoggerConfig) Middleware {
 
 func saneConfig(in LoggerConfig) LoggerConfig {
 	out := LoggerConfig{
-		Output:          os.Stdout,
-		LogFormat:       "%v | HTTP/%d | %4d | %10v | %30s | %30s | %15s | %7s %-7s \n",
-		TimestampFormat: time.DateTime,
-		LogFormatter:    defaultLogFormatter,
+		Output:       os.Stdout,
+		LogFormatter: defaultLogFormatter,
 	}
 
 	if in.Output != nil {
 		out.Output = in.Output
-	}
-
-	if in.LogFormat != "" {
-		out.LogFormat = in.LogFormat
-	}
-
-	if in.TimestampFormat != "" {
-		out.TimestampFormat = in.TimestampFormat
 	}
 
 	if in.LogFormatter != nil {
@@ -126,13 +116,17 @@ func log(
 		ProtocolVersion:         r.ProtoMajor,
 	}
 
-	_, _ = fmt.Fprint(cfg.Output, cfg.LogFormatter(cfg, params))
+	_, _ = fmt.Fprint(cfg.Output, cfg.LogFormatter(params))
 }
 
-func defaultLogFormatter(config LoggerConfig, params LogFormatterParams) string {
+func defaultLogFormatter(params LogFormatterParams) string {
+	logFormat := "%v | HTTP/%d | %4d | %10v | %30s | %30s | %15s | %7s %-7s \n"
+
+	timeFormat := time.DateTime
+
 	return fmt.Sprintf(
-		config.LogFormat,
-		params.Timestamp.Format(config.TimestampFormat),
+		logFormat,
+		params.Timestamp.Format(timeFormat),
 		params.ProtocolVersion,
 		params.StatusCode,
 		params.Latency,
@@ -145,10 +139,8 @@ func defaultLogFormatter(config LoggerConfig, params LogFormatterParams) string 
 }
 
 type LoggerConfig struct {
-	Output          io.Writer
-	LogFormat       string
-	TimestampFormat string
-	LogFormatter    func(LoggerConfig, LogFormatterParams) string
+	Output       io.Writer
+	LogFormatter func(LogFormatterParams) string
 }
 
 type LogFormatterParams struct {
@@ -184,7 +176,7 @@ func (l LogFormatterParams) String() string {
 				"ResponseContentEncoding: %s",
 				"ProtocolVersion: %d",
 			},
-			"\n",
+			", ",
 		),
 	)
 
