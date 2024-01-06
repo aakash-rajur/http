@@ -152,16 +152,55 @@ type LoggerConfig struct {
 }
 
 type LogFormatterParams struct {
-	Timestamp               time.Time           `json:"timestamp"`
-	StatusCode              int                 `json:"status_code,omitempty"`
-	Latency                 time.Duration       `json:"latency,omitempty"`
-	ClientIP                string              `json:"client_ip,omitempty"`
-	Method                  string              `json:"method,omitempty"`
-	Path                    string              `json:"path,omitempty"`
-	Query                   map[string][]string `json:"query,omitempty"`
-	RequestContentType      string              `json:"request_content_type,omitempty"`
-	RequestContentEncoding  string              `json:"request_content_encoding,omitempty"`
-	ResponseContentType     string              `json:"response_content_type,omitempty"`
-	ResponseContentEncoding string              `json:"response_content_encoding,omitempty"`
-	ProtocolVersion         int                 `json:"protocolVersion,omitempty"`
+	Timestamp               time.Time           `json:"timestamp" yaml:"timestamp"`
+	StatusCode              int                 `json:"status_code" yaml:"status_code"`
+	Latency                 time.Duration       `json:"latency" yaml:"latency"`
+	ClientIP                string              `json:"client_ip" yaml:"client_ip"`
+	Method                  string              `json:"method" yaml:"method"`
+	Path                    string              `json:"path" yaml:"path"`
+	Query                   map[string][]string `json:"query" yaml:"query"`
+	RequestContentType      string              `json:"request_content_type" yaml:"request_content_type"`
+	RequestContentEncoding  string              `json:"request_content_encoding" yaml:"request_content_encoding"`
+	ResponseContentType     string              `json:"response_content_type" yaml:"response_content_type"`
+	ResponseContentEncoding string              `json:"response_content_encoding" yaml:"response_content_encoding"`
+	ProtocolVersion         int                 `json:"protocol_version" yaml:"protocol_version"`
+}
+
+func (l LogFormatterParams) String() string {
+	logFmt := fmt.Sprintf(
+		"{ %s }",
+		strings.Join(
+			[]string{
+				"Timestamp: %v",
+				"StatusCode: %d",
+				"Latency: %v",
+				"ClientIP: %s",
+				"Method: %s",
+				"Path: %s",
+				"Query: %v",
+				"RequestContentType: %s",
+				"RequestContentEncoding: %s",
+				"ResponseContentType: %s",
+				"ResponseContentEncoding: %s",
+				"ProtocolVersion: %d",
+			},
+			"\n",
+		),
+	)
+
+	return fmt.Sprintf(
+		logFmt,
+		l.Timestamp,
+		l.StatusCode,
+		l.Latency,
+		l.ClientIP,
+		l.Method,
+		l.Path,
+		l.Query,
+		l.RequestContentType,
+		l.RequestContentEncoding,
+		l.ResponseContentType,
+		l.ResponseContentEncoding,
+		l.ProtocolVersion,
+	)
 }

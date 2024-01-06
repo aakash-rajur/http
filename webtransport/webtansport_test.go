@@ -36,7 +36,7 @@ func TestMiddleware(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	handler := &mockHandler{}
+	handler := new(mockHandler)
 
 	handler.On(
 		"ServeHTTP",
