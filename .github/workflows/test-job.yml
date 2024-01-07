@@ -9,23 +9,6 @@ on:
         required: true
         default: 'main'
 
-env:
-  POSTGRESQL_VERSION: 16
-  POSTGRESQL_IMAGE: bitnami/postgresql
-  TMDB_PG_PORT: 54320
-  TMDB_PG_DATABASE: app
-  TMDB_PG_USER: app
-  TMDB_PG_PASSWORD: app
-  TMDB_PG_CONTAINER_NAME: tmdb-pg
-  MYSQL_IMAGE: mysql
-  MYSQL_VERSION: 8.0
-  TMDB_MYSQL_PORT: 33060
-  TMDB_MYSQL_DATABASE: app
-  TMDB_MYSQL_USER: app
-  TMDB_MYSQL_PASSWORD: app
-  TMDB_MYSQL_ROOT_PASSWORD: root
-  TMDB_MYSQL_CONTAINER_NAME: tmdb-mysql
-
 jobs:
   test:
     name: "Unit"
