@@ -31,29 +31,13 @@ func TestMiddlewares_Append(t *testing.T) {
 func TestMiddlewares_Chain(t *testing.T) {
 	middlewares := make(Middlewares, 0)
 
-	m1 := mockMiddleware{}
+	mm1, mm2 := NewMockMiddleware(), NewMockMiddleware()
 
-	m1.On(
-		"Run",
-		mock.AnythingOfType("*httptest.ResponseRecorder"),
-		mock.AnythingOfType("*http.Request"),
-		mock.AnythingOfType("Next"),
-	)
+	middlewares = middlewares.Append(mm1.Middleware())
 
-	m2 := mockMiddleware{}
+	middlewares = middlewares.Append(mm2.Middleware())
 
-	m2.On(
-		"Run",
-		mock.AnythingOfType("*httptest.ResponseRecorder"),
-		mock.AnythingOfType("*http.Request"),
-		mock.AnythingOfType("Next"),
-	)
-
-	middlewares = middlewares.Append(m1.Run)
-
-	middlewares = middlewares.Append(m2.Run)
-
-	final := &mockHandler{}
+	final := &MockHandler{}
 
 	final.On(
 		"ServeHTTP",
@@ -71,13 +55,13 @@ func TestMiddlewares_Chain(t *testing.T) {
 
 	handler(mrw, mr)
 
-	m1.AssertCalled(t, "Run", mrw, mr, mock.AnythingOfType("Next"))
+	mm1.AssertCalled(t, "Run", mrw, mr, mock.AnythingOfType("Next"))
 
-	m1.AssertNumberOfCalls(t, "Run", 1)
+	mm1.AssertNumberOfCalls(t, "Run", 1)
 
-	m2.AssertCalled(t, "Run", mrw, mr, mock.AnythingOfType("Next"))
+	mm2.AssertCalled(t, "Run", mrw, mr, mock.AnythingOfType("Next"))
 
-	m2.AssertNumberOfCalls(t, "Run", 1)
+	mm2.AssertNumberOfCalls(t, "Run", 1)
 
 	final.AssertCalled(t, "ServeHTTP", mrw, mr)
 
