@@ -1,4 +1,8 @@
 # http
+
+[![Test](https://github.com/aakash-rajur/http/actions/workflows/test.yml/badge.svg)](https://github.com/aakash-rajur/sqlxgen/actions/workflows/test.yml)
+[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/aakash-rajur/sqlxgen/main/LICENSE.md)
+
 > yet another http routing library
 
 ## goal
