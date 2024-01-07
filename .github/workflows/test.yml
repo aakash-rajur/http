@@ -1,0 +1,21 @@
+name: Test
+run-name: Test ${{ github.ref_name }} 🧪 (${{ github.event.head_commit.message }})
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      ref:
+        type: string
+        description: 'Branch or tag'
+        required: true
+        default: 'main'
+
+jobs:
+  test:
+    name: Test
+    uses: ./.github/workflows/test-job.yml
+    with:
+      ref: ${{ github.event.inputs.ref }}
