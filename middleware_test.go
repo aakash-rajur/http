@@ -37,19 +37,15 @@ func TestMiddlewares_Chain(t *testing.T) {
 
 	middlewares = middlewares.Append(mm2.Middleware())
 
-	final := &MockHandler{}
-
-	final.On(
-		"ServeHTTP",
-		mock.AnythingOfType("*httptest.ResponseRecorder"),
-		mock.AnythingOfType("*http.Request"),
-	)
+	final := NewMockHandler(nil)
 
 	handler := middlewares.Chain(final.ServeHTTP)
 
 	assert.NotNil(t, handler)
 
-	mrw := httptest.NewRecorder()
+	rr := httptest.NewRecorder()
+
+	mrw := &ResponseWriter{ResponseWriter: rr}
 
 	mr := httptest.NewRequest(http.MethodGet, "/", nil)
 
