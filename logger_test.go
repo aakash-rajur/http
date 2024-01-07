@@ -270,7 +270,6 @@ func Test_log(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			middleware := func(w http.ResponseWriter, r *http.Request, next Next) {
 				log(tt.args, w, r, next)
 			}

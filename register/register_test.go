@@ -171,6 +171,8 @@ func TestRegister_Add(t *testing.T) {
 }
 
 func TestRegister_Find(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		pattern string
 	}
@@ -287,11 +289,11 @@ func TestRegister_Find(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1, err := tt.r.Find(tt.args.pattern)
+			entry, params, err := tt.r.Find(tt.args.pattern)
 
-			assert.Equalf(t, tt.want.entry, got, "Find() entry = %v, want %v", got, tt.want.entry)
+			assert.Equalf(t, tt.want.entry, entry, "Find() entry = %v, want %v", entry, tt.want.entry)
 
-			assert.Equalf(t, tt.want.params, got1, "Find() params = %v, want %v", got1, tt.want.params)
+			assert.Equalf(t, tt.want.params, params, "Find() params = %v, want %v", params, tt.want.params)
 
 			assert.Equalf(t, tt.want.err, err, "Find() err = %v, want %v", err, tt.want.err)
 		})
