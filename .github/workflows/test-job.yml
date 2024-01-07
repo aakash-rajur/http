@@ -28,7 +28,7 @@ env:
 
 jobs:
   test:
-    name: "Unit and Integration"
+    name: "Unit"
     runs-on: ubuntu-latest
     steps:
       - id: checkout
