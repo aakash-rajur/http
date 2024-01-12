@@ -299,3 +299,87 @@ func TestRegister_Find(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkRegister_Find(b *testing.B) {
+	r := NewRegister().
+		Add("/health", http.HandlerFunc(http.NotFound)).
+		Add("/api/v2/books", http.HandlerFunc(http.NotFound)).
+		Add("/api/v2/books/{bookId}", http.HandlerFunc(http.NotFound)).
+		Add("/api/v2/users", http.HandlerFunc(http.NotFound)).
+		Add("/api/v2/users/{userId}", http.HandlerFunc(http.NotFound)).
+		Add("/api/v2/users/{userId}/books", http.HandlerFunc(http.NotFound)).
+		Add("/api/v2/rpc/{service}/{method}", http.HandlerFunc(http.NotFound))
+
+	type args struct {
+		pattern string
+		params  params.Params
+		err     error
+	}
+
+	testCases := []args{
+		{
+			pattern: "/health",
+			params:  params.Params{},
+			err:     nil,
+		},
+		{
+			pattern: "/api/v2/books",
+			params:  params.Params{},
+			err:     nil,
+		},
+		{
+			pattern: "/api/v2/books/10",
+			params: params.Params{
+				"bookId": "10",
+			},
+			err: nil,
+		},
+		{
+			pattern: "/api/v2/users",
+			params:  params.Params{},
+			err:     nil,
+		},
+		{
+			pattern: "/api/v2/users/10",
+			params: params.Params{
+				"userId": "10",
+			},
+		},
+		{
+			pattern: "/api/v2/users/10/books",
+			params: params.Params{
+				"userId": "10",
+			},
+			err: nil,
+		},
+		{
+			pattern: "/api/v2/rpc/service/method",
+			params: params.Params{
+				"service": "service",
+				"method":  "method",
+			},
+			err: nil,
+		},
+		{
+			pattern: "/not-found",
+			params:  params.Params(nil),
+			err:     ErrNotFound,
+		},
+	}
+
+	var entry Entry
+
+	var p params.Params
+
+	var err error
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		for _, testCase := range testCases {
+			entry, p, err = r.Find(testCase.pattern)
+		}
+	}
+
+	_, _, _ = entry, p, err
+}

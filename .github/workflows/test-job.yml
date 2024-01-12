@@ -57,6 +57,7 @@ jobs:
         name: run tests
         run: |
           go test -json . 2>&1 | tee TestResults.json
+          go test -json -bench . ./... -benchtime=10s 2>&1 | tee -a TestResults.json
       - name: upload test results
         uses: actions/upload-artifact@v3
         with:
