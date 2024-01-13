@@ -103,6 +103,15 @@ func main() {
 	router.Use(h.Logger(h.LoggerConfig{}))
 
 	router.GetFunc(
+		"/",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+
+			_, _ = w.Write([]byte("Hello World!"))
+		},
+	)
+
+	router.GetFunc(
 		"/health",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
