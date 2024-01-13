@@ -67,7 +67,7 @@ func main() {
 	router.GetFunc(
 		"/api/v2/books/{id}",
 		func(w http.ResponseWriter, r *http.Request) {
-			p, ok := params.FromContext(r.Context())
+			p, ok := params.FromRequest(r)
 
 			if !ok {
 				http.Error(w, "unable to parse param", http.StatusInternalServerError)
@@ -123,7 +123,7 @@ func main() {
 	router.GetFunc(
 		"/api/v2/users/{id}",
 		func(w http.ResponseWriter, r *http.Request) {
-			p, ok := params.FromContext(r.Context())
+			p, ok := params.FromRequest(r)
 
 			if !ok {
 				http.Error(w, "unable to parse param", http.StatusInternalServerError)
@@ -162,7 +162,7 @@ func main() {
 	router.GetFunc(
 		"/api/v2/users/{id}/books",
 		func(w http.ResponseWriter, r *http.Request) {
-			p, ok := params.FromContext(r.Context())
+			p, ok := params.FromRequest(r)
 
 			if !ok {
 				http.Error(w, "unable to parse param", http.StatusInternalServerError)
@@ -227,7 +227,7 @@ func main() {
 	router.GetFunc(
 		"/identity/{id}",
 		func(w http.ResponseWriter, r *http.Request) {
-			p, ok := params.FromContext(r.Context())
+			p, ok := params.FromRequest(r)
 
 			if !ok {
 				http.Error(w, "unable to parse param", http.StatusInternalServerError)

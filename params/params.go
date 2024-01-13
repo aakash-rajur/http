@@ -1,6 +1,9 @@
 package params
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
 
 type Params map[string]string
 
@@ -18,7 +21,9 @@ func (p Params) WithinContext(ctx context.Context) context.Context {
 	return context.WithValue(ctx, paramsKey, p)
 }
 
-func FromContext(ctx context.Context) (Params, bool) {
+func FromRequest(r *http.Request) (Params, bool) {
+	ctx := r.Context()
+
 	if ctx == nil {
 		return nil, false
 	}

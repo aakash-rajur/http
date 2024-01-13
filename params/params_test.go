@@ -1,8 +1,9 @@
 package params
 
 import (
-	"context"
 	"github.com/stretchr/testify/assert"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -68,9 +69,13 @@ func TestParams_WithinContext(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := tc.params.WithinContext(context.Background())
+			mr := httptest.NewRequest(http.MethodGet, "/", nil)
 
-			actual, ok := FromContext(ctx)
+			ctx := tc.params.WithinContext(mr.Context())
+
+			mr = mr.WithContext(ctx)
+
+			actual, ok := FromRequest(mr)
 
 			assert.Truef(t, ok, "want ok == true, got %v", ok)
 
@@ -79,48 +84,44 @@ func TestParams_WithinContext(t *testing.T) {
 	}
 }
 
-func TestFromContext(t *testing.T) {
+func TestFromRequest(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
 		name     string
-		ctx      context.Context
+		params   Params
 		expected Params
-		ok       bool
 	}{
 		{
 			name:     "success",
-			ctx:      Params{"foo": "bar"}.WithinContext(context.Background()),
+			params:   Params{"foo": "bar"},
 			expected: Params{"foo": "bar"},
-			ok:       true,
 		},
 		{
-			name:     "nil context",
-			ctx:      nil,
+			name:     "nil params",
+			params:   nil,
 			expected: nil,
-			ok:       false,
 		},
 		{
-			name:     "empty context",
-			ctx:      context.Background(),
-			expected: nil,
-			ok:       false,
-		},
-		{
-			name:     "wrong type",
-			ctx:      context.WithValue(context.Background(), paramsKey, "foo"),
-			expected: nil,
-			ok:       false,
+			name:     "empty params",
+			params:   Params{},
+			expected: Params{},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, ok := FromContext(tc.ctx)
+			mr := httptest.NewRequest(http.MethodGet, "/", nil)
+
+			ctx := tc.params.WithinContext(mr.Context())
+
+			mr = mr.WithContext(ctx)
+
+			actual, ok := FromRequest(mr)
+
+			assert.Truef(t, ok, "want ok == true, got %v", ok)
 
 			assert.Equalf(t, tc.expected, actual, "want %v, got %v", tc.expected, actual)
-
-			assert.Equalf(t, tc.ok, ok, "want %v, got %v", tc.ok, ok)
 		})
 	}
 }
