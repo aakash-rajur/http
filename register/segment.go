@@ -50,23 +50,23 @@ func (s segments) params(other segments) params.Params {
 func (s segments) cmp(other segments, start int) (int, int) {
 	sl, ol := len(s), len(other)
 
-	length := min(sl, ol)
+	minLength := min(sl, ol)
 
-	for i := start; i < length; i += 1 {
+	for i := start; i < minLength; i += 1 {
 		a, b := s[i], other[i]
 
-		value := a.cmp(b)
+		comparison := a.cmp(b)
 
-		if value == 0 {
+		if comparison == 0 {
 			continue
 		}
 
-		return value, i
+		return comparison, i
 	}
 
-	normalized := max(-1, min(1, sl-ol))
+	comparison := sl - ol
 
-	return normalized, length
+	return comparison, 0
 }
 
 type segment string

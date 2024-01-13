@@ -53,9 +53,9 @@ func (r Register) Find(pattern string) (Entry, p.Params, error) {
 
 		entry := r[mid]
 
-		value, last := entry.segments.cmp(ss, cursor)
+		comparison, last := entry.segments.cmp(ss, cursor)
 
-		if value == 0 && last == len(ss) {
+		if comparison == 0 {
 			params := entry.segments.params(ss)
 
 			return entry, params, nil
@@ -64,14 +64,14 @@ func (r Register) Find(pattern string) (Entry, p.Params, error) {
 		cursor = last
 
 		// mid > target, go left
-		if value > 0 {
+		if comparison > 0 {
 			right = mid - 1
 
 			continue
 		}
 
 		// mid < target, go right
-		if value < 0 {
+		if comparison < 0 {
 			left = mid + 1
 
 			continue
