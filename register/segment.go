@@ -47,26 +47,30 @@ func (s segments) params(other segments) params.Params {
 	return p
 }
 
-func (s segments) cmp(other segments, start int) (int, int) {
+func (s segments) cmp(other segments, strict bool) int {
 	sl, ol := len(s), len(other)
+
+	delta := sl - ol
+
+	if delta != 0 {
+		return delta
+	}
 
 	minLength := min(sl, ol)
 
-	for i := start; i < minLength; i += 1 {
+	for i := 0; i < minLength; i += 1 {
 		a, b := s[i], other[i]
 
-		comparison := a.cmp(b)
+		comparison := a.cmp(b, strict)
 
 		if comparison == 0 {
 			continue
 		}
 
-		return comparison, i
+		return comparison
 	}
 
-	comparison := sl - ol
-
-	return comparison, 0
+	return 0
 }
 
 type segment string
@@ -89,9 +93,19 @@ func (s segment) name() string {
 	return string(s[1 : len(s)-1])
 }
 
-func (s segment) cmp(other segment) int {
-	if s.isParam() {
-		return 0
+func (s segment) cmp(other segment, strict bool) int {
+	sp, op := s.isParam(), other.isParam()
+
+	if sp && !op {
+		if !strict {
+			return 0
+		}
+
+		return -1
+	}
+
+	if !sp && op {
+		return 1
 	}
 
 	return cmp.Compare(s, other)

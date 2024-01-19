@@ -207,7 +207,8 @@ func Test_segment_cmp(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		other segment
+		other  segment
+		strict bool
 	}
 
 	tests := []struct {
@@ -220,7 +221,8 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_1",
 			segment("test"),
 			args{
-				other: segment("test"),
+				other:  segment("test"),
+				strict: true,
 			},
 			0,
 		},
@@ -228,23 +230,26 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_2",
 			segment("test"),
 			args{
-				other: segment("{test}"),
+				other:  segment("{test}"),
+				strict: true,
 			},
-			-1,
+			1,
 		},
 		{
 			"test_segment_cmp_3",
 			segment("{test}"),
 			args{
-				other: segment("test"),
+				other:  segment("test"),
+				strict: true,
 			},
-			0,
+			-1,
 		},
 		{
 			"test_segment_cmp_4",
 			segment("{test}"),
 			args{
-				other: segment("{test}"),
+				other:  segment("test"),
+				strict: false,
 			},
 			0,
 		},
@@ -252,31 +257,62 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_5",
 			segment("{test}"),
 			args{
-				other: segment("{test2}"),
+				other:  segment("{test}"),
+				strict: true,
 			},
 			0,
 		},
 		{
 			"test_segment_cmp_6",
-			segment("{test2}"),
+			segment("{test}"),
 			args{
-				other: segment("{test}"),
+				other:  segment("{test2}"),
+				strict: true,
 			},
-			0,
+			1,
 		},
 		{
 			"test_segment_cmp_7",
 			segment("{test2}"),
 			args{
-				other: segment("{test2}"),
+				other:  segment("{test}"),
+				strict: true,
 			},
-			0,
+			-1,
 		},
 		{
 			"test_segment_cmp_8",
 			segment("{test2}"),
 			args{
-				other: segment("{test3}"),
+				other:  segment("{test2}"),
+				strict: true,
+			},
+			0,
+		},
+		{
+			"test_segment_cmp_9",
+			segment("{test2}"),
+			args{
+				other:  segment("{test3}"),
+				strict: true,
+			},
+			-1,
+		},
+		{
+			"test_segment_cmp_10",
+			segment("{arg1}"),
+			args{
+				other:  segment("test"),
+				strict: true,
+			},
+			-1,
+		},
+		{
+			"test_segment_cmp_11",
+			segment("{arg1}"),
+			args{
+				other:  segment("test"),
+				strict: false,
 			},
 			0,
 		},
@@ -284,7 +320,7 @@ func Test_segment_cmp(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.s.cmp(tt.args.other)
+			got := tt.s.cmp(tt.args.other, tt.args.strict)
 
 			assert.Equal(t, tt.want, got)
 		})
@@ -295,8 +331,8 @@ func Test_segments_cmp(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		other segments
-		start int
+		other  segments
+		strict bool
 	}
 
 	tests := []struct {
@@ -309,16 +345,16 @@ func Test_segments_cmp(t *testing.T) {
 			name: "test_segments_cmp_1",
 			s:    segments{},
 			args: args{
-				other: segments{},
-				start: 0,
+				other:  segments{},
+				strict: false,
 			},
 		},
 		{
 			name: "test_segments_cmp_2",
 			s:    segments{},
 			args: args{
-				other: segments{"test"},
-				start: 0,
+				other:  segments{"test"},
+				strict: false,
 			},
 			want: -1,
 		},
@@ -326,8 +362,8 @@ func Test_segments_cmp(t *testing.T) {
 			name: "test_segments_cmp_3",
 			s:    segments{"test"},
 			args: args{
-				other: segments{},
-				start: 0,
+				other:  segments{},
+				strict: false,
 			},
 			want: 1,
 		},
@@ -335,16 +371,16 @@ func Test_segments_cmp(t *testing.T) {
 			name: "test_segments_cmp_4",
 			s:    segments{"test"},
 			args: args{
-				other: segments{"test"},
-				start: 0,
+				other:  segments{"test"},
+				strict: false,
 			},
 		},
 		{
 			name: "test_segments_cmp_5",
 			s:    segments{"test"},
 			args: args{
-				other: segments{"test", "test"},
-				start: 0,
+				other:  segments{"test", "test"},
+				strict: false,
 			},
 			want: -1,
 		},
@@ -352,8 +388,8 @@ func Test_segments_cmp(t *testing.T) {
 			name: "test_segments_cmp_6",
 			s:    segments{"test", "test"},
 			args: args{
-				other: segments{"test"},
-				start: 0,
+				other:  segments{"test"},
+				strict: false,
 			},
 			want: 1,
 		},
@@ -361,16 +397,16 @@ func Test_segments_cmp(t *testing.T) {
 			name: "test_segments_cmp_7",
 			s:    segments{"test", "test"},
 			args: args{
-				other: segments{"test", "test"},
-				start: 0,
+				other:  segments{"test", "test"},
+				strict: false,
 			},
 		},
 		{
 			name: "test_segments_cmp_8",
 			s:    segments{"test", "test"},
 			args: args{
-				other: segments{"test", "test", "test"},
-				start: 0,
+				other:  segments{"test", "test", "test"},
+				strict: false,
 			},
 			want: -1,
 		},
@@ -378,8 +414,8 @@ func Test_segments_cmp(t *testing.T) {
 			name: "test_segments_cmp_9",
 			s:    segments{"test", "test", "test"},
 			args: args{
-				other: segments{"test", "test"},
-				start: 0,
+				other:  segments{"test", "test"},
+				strict: false,
 			},
 			want: 1,
 		},
@@ -387,51 +423,278 @@ func Test_segments_cmp(t *testing.T) {
 			name: "test_segments_cmp_10",
 			s:    segments{"test", "test", "test"},
 			args: args{
-				other: segments{"test", "test", "test"},
-				start: 0,
+				other:  segments{"test", "test", "test"},
+				strict: false,
 			},
 		},
 		{
 			name: "test_segments_cmp_11",
-			s:    segments{"test", "test", "test"},
+			s:    segments{"test", "{id}"},
 			args: args{
-				other: segments{"test", "test", "test", "test"},
-				start: 0,
+				other:  segments{"test", "test", "test"},
+				strict: false,
 			},
 			want: -1,
 		},
 		{
 			name: "test_segments_cmp_12",
-			s:    segments{"test", ":id"},
+			s:    segments{"{arg1}", "test", "{arg2}"},
 			args: args{
-				other: segments{"test", "test", "test"},
-				start: 0,
+				other:  segments{"test", "test"},
+				strict: false,
 			},
-			want: -1,
+			want: 1,
 		},
 		{
 			name: "test_segments_cmp_13",
-			s:    segments{"{arg1}", "test", ":arg2"},
+			s:    segments{"{arg1}", "{arg2}", "{arg3}"},
 			args: args{
-				other: segments{"test", "test"},
-				start: 0,
+				other:  segments{"test", "test", "test"},
+				strict: false,
 			},
-			want: 1,
 		},
 		{
 			name: "test_segments_cmp_14",
 			s:    segments{"{arg1}", "{arg2}", "{arg3}"},
 			args: args{
-				other: segments{"test", "test", "test"},
-				start: 0,
+				other:  segments{"test", "test", "test", "test"},
+				strict: false,
 			},
+			want: -1,
 		},
 		{
 			name: "test_segments_cmp_15",
-			s:    segments{":arg1", ":arg2", ":arg3"},
+			s: segments{
+				"PATCH",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"pulls",
+				"comments",
+				"{number}",
+			},
 			args: args{
-				other: segments{"test", "test", "test", "test"},
-				start: 0,
+				other: segments{
+					"PATCH",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"pulls",
+					"{number}",
+				},
+				strict: true,
+			},
+			want: 1,
+		},
+		{
+			name: "test_segments_cmp_16",
+			s: segments{
+				"PATCH",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"pulls",
+				"{number}",
+			},
+			args: args{
+				other: segments{
+					"PATCH",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"pulls",
+					"comments",
+					"{number}",
+				},
+				strict: true,
+			},
+			want: -1,
+		},
+		{
+			name: "test_segments_cmp_16",
+			s: segments{
+				"GET",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"git",
+				"blobs",
+				"{sha}",
+			},
+			args: args{
+				other: segments{
+					"GET",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"downloads",
+					"{id}",
+				},
+				strict: true,
+			},
+			want: 1,
+		},
+		{
+			name: "test_segments_cmp_18",
+			s: segments{
+				"GET",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"downloads",
+				"{id}",
+			},
+			args: args{
+				other: segments{
+					"GET",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"git",
+					"blobs",
+					"{sha}",
+				},
+				strict: true,
+			},
+			want: -1,
+		},
+		{
+			name: "test_segments_cmp_19",
+			s: segments{
+				"GET",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"forks",
+			},
+			args: args{
+				other: segments{
+					"GET",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"downloads",
+					"{id}",
+				},
+				strict: true,
+			},
+			want: -1,
+		},
+		{
+			name: "test_segments_cmp_20",
+			s: segments{
+				"GET",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"downloads",
+				"{id}",
+			},
+			args: args{
+				other: segments{
+					"GET",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"forks",
+				},
+				strict: true,
+			},
+			want: 1,
+		},
+		{
+			name: "test_segments_cmp_21",
+			s: segments{
+				"PATCH",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"pulls",
+				"comments",
+				"{number}",
+			},
+			args: args{
+				other: segments{
+					"PATCH",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"pulls",
+					"{number}",
+				},
+				strict: true,
+			},
+			want: 1,
+		},
+		{
+			name: "test_segments_cmp_22",
+			s: segments{
+				"PATCH",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"pulls",
+				"{number}",
+			},
+			args: args{
+				other: segments{
+					"PATCH",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"pulls",
+					"comments",
+					"{number}",
+				},
+				strict: true,
+			},
+			want: -1,
+		},
+		{
+			name: "test_segments_cmp_23",
+			s: segments{
+				"PATCH",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"pulls",
+				"comments",
+				"{number}",
+			},
+			args: args{
+				other: segments{
+					"PATCH",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"pulls",
+					"{number}",
+				},
+				strict: true,
+			},
+			want: 1,
+		},
+		{
+			name: "test_segments_cmp_24",
+			s: segments{
+				"PATCH",
+				"repos",
+				"{owner}",
+				"{repo}",
+				"pulls",
+				"{number}",
+			},
+			args: args{
+				other: segments{
+					"PATCH",
+					"repos",
+					"{owner}",
+					"{repo}",
+					"pulls",
+					"comments",
+					"{number}",
+				},
+				strict: true,
 			},
 			want: -1,
 		},
@@ -439,7 +702,7 @@ func Test_segments_cmp(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, _ := tt.s.cmp(tt.args.other, tt.args.start)
+			got := tt.s.cmp(tt.args.other, tt.args.strict)
 
 			assert.Equal(t, tt.want, got)
 		})
