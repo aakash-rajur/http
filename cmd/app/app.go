@@ -2,13 +2,9 @@ package main
 
 import (
 	"crypto"
-	"crypto/rand"
-	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/tls"
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
 	h "github.com/aakash-rajur/http"
 	"github.com/aakash-rajur/http/params"
@@ -247,28 +243,7 @@ func main() {
 
 	hash := crypto.SHA256
 
-	ak, err := rsa.GenerateKey(rand.Reader, modulusLength)
-
-	if err != nil {
-		panic(err)
-	}
-
-	akPublicBuffer, err := x509.MarshalPKIXPublicKey(ak.Public())
-
-	if err != nil {
-		panic(err)
-	}
-
-	akPublic := pem.EncodeToMemory(
-		&pem.Block{
-			Type:  "PUBLIC KEY",
-			Bytes: akPublicBuffer,
-		},
-	)
-
-	if err != nil {
-		panic(err)
-	}
+	keyPair, err := generateRSAKeyPair(hash, modulusLength)
 
 	router.GetFunc(
 		"/public",
@@ -280,7 +255,7 @@ func main() {
 			payload := map[string]interface{}{
 				"modulusLength": modulusLength,
 				"hash":          hash.String(),
-				"publicKey":     string(akPublic),
+				"publicKey":     keyPair.PublicKeyBytes,
 			}
 
 			jsonPayload, err := json.Marshal(payload)
@@ -310,7 +285,7 @@ func main() {
 
 			_ = buffer
 
-			decrypted, err := ak.Decrypt(nil, buffer, &rsa.OAEPOptions{Hash: hash})
+			decrypted, err := keyPair.Decrypt(buffer)
 
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -333,6 +308,44 @@ func main() {
 			w.Header().Set("Content-Type", "application/json")
 
 			_, _ = w.Write(jsonPayload)
+		},
+	)
+
+	router.GetFunc(
+		"/settings.json",
+		func(w http.ResponseWriter, r *http.Request) {
+			keyPair, err := generateRSAKeyPair(hash, modulusLength)
+
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+
+				return
+			}
+
+			// send the public key to the client along with existing settings object
+
+			w.Header().Set("Content-Type", "application/json")
+
+			w.WriteHeader(http.StatusOK)
+
+			payload := map[string]interface{}{
+				"modulusLength": modulusLength,
+				"hash":          hash.String(),
+				"publicKey":     keyPair.PublicKeyBytes,
+				"other":         "stuff",
+			}
+
+			jsonPayload, err := json.Marshal(payload)
+
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+
+				return
+			}
+
+			_, _ = w.Write(jsonPayload)
+
+			// store the keypair somewhere for setup-session to pickup
 		},
 	)
 
