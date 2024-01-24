@@ -207,8 +207,7 @@ func Test_segment_cmp(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		other  segment
-		strict bool
+		other segment
 	}
 
 	tests := []struct {
@@ -221,8 +220,7 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_1",
 			segment("test"),
 			args{
-				other:  segment("test"),
-				strict: true,
+				other: segment("test"),
 			},
 			0,
 		},
@@ -230,8 +228,7 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_2",
 			segment("test"),
 			args{
-				other:  segment("{test}"),
-				strict: true,
+				other: segment("{test}"),
 			},
 			1,
 		},
@@ -239,17 +236,15 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_3",
 			segment("{test}"),
 			args{
-				other:  segment("test"),
-				strict: true,
+				other: segment("test"),
 			},
-			-1,
+			0,
 		},
 		{
 			"test_segment_cmp_4",
 			segment("{test}"),
 			args{
-				other:  segment("test"),
-				strict: false,
+				other: segment("test"),
 			},
 			0,
 		},
@@ -257,8 +252,7 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_5",
 			segment("{test}"),
 			args{
-				other:  segment("{test}"),
-				strict: true,
+				other: segment("{test}"),
 			},
 			0,
 		},
@@ -266,8 +260,7 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_6",
 			segment("{test}"),
 			args{
-				other:  segment("{test2}"),
-				strict: true,
+				other: segment("{test2}"),
 			},
 			1,
 		},
@@ -275,8 +268,7 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_7",
 			segment("{test2}"),
 			args{
-				other:  segment("{test}"),
-				strict: true,
+				other: segment("{test}"),
 			},
 			-1,
 		},
@@ -284,8 +276,7 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_8",
 			segment("{test2}"),
 			args{
-				other:  segment("{test2}"),
-				strict: true,
+				other: segment("{test2}"),
 			},
 			0,
 		},
@@ -293,8 +284,7 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_9",
 			segment("{test2}"),
 			args{
-				other:  segment("{test3}"),
-				strict: true,
+				other: segment("{test3}"),
 			},
 			-1,
 		},
@@ -302,17 +292,15 @@ func Test_segment_cmp(t *testing.T) {
 			"test_segment_cmp_10",
 			segment("{arg1}"),
 			args{
-				other:  segment("test"),
-				strict: true,
+				other: segment("test"),
 			},
-			-1,
+			0,
 		},
 		{
 			"test_segment_cmp_11",
 			segment("{arg1}"),
 			args{
-				other:  segment("test"),
-				strict: false,
+				other: segment("test"),
 			},
 			0,
 		},
@@ -320,7 +308,7 @@ func Test_segment_cmp(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.s.cmp(tt.args.other, tt.args.strict)
+			got := tt.s.cmp(tt.args.other)
 
 			assert.Equal(t, tt.want, got)
 		})
@@ -702,7 +690,7 @@ func Test_segments_cmp(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.s.cmp(tt.args.other, tt.args.strict)
+			got := tt.s.cmp(tt.args.other)
 
 			assert.Equal(t, tt.want, got)
 		})
