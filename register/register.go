@@ -23,7 +23,7 @@ func (r Register) Add(pattern string, handler http.Handler) Register {
 
 	updated := append(r, entry)
 
-	slices.SortStableFunc(updated, func(a, b Entry) int { return a.segments.cmp(b.segments, true) })
+	slices.SortStableFunc(updated, func(a, b Entry) int { return a.cmp(b) })
 
 	return updated
 }
@@ -44,7 +44,7 @@ func (r Register) Find(pattern string) (Entry, p.Params, error) {
 
 		entry := r[mid]
 
-		comparison := entry.segments.cmp(ss, false)
+		comparison := entry.segments.cmp(ss)
 
 		if comparison == 0 {
 			params := entry.segments.params(ss)
@@ -68,11 +68,6 @@ func (r Register) Find(pattern string) (Entry, p.Params, error) {
 	}
 
 	return Entry{}, nil, ErrNotFound
-}
-
-type Entry struct {
-	segments segments
-	Handler  http.Handler
 }
 
 var ErrNotFound = errors.New("entry not found")

@@ -50,12 +50,6 @@ func (s segments) params(other segments) params.Params {
 func (s segments) cmp(other segments) int {
 	sl, ol := len(s), len(other)
 
-	delta := sl - ol
-
-	if delta != 0 {
-		return delta
-	}
-
 	minLength := min(sl, ol)
 
 	for i := 0; i < minLength; i += 1 {
@@ -70,7 +64,7 @@ func (s segments) cmp(other segments) int {
 		return comparison
 	}
 
-	return 0
+	return sl - ol
 }
 
 type segment string
