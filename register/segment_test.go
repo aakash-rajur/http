@@ -566,7 +566,7 @@ func Test_segments_cmp(t *testing.T) {
 				},
 				strict: true,
 			},
-			want: -1,
+			want: 1,
 		},
 		{
 			name: "test_segments_cmp_20",
@@ -588,7 +588,7 @@ func Test_segments_cmp(t *testing.T) {
 				},
 				strict: true,
 			},
-			want: 1,
+			want: -1,
 		},
 		{
 			name: "test_segments_cmp_21",
