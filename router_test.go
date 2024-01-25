@@ -851,6 +851,1260 @@ func TestRouter_ServeHTTP_ParseApi(t *testing.T) {
 	}
 }
 
+func TestRouter_ServeHTTP_GithubApi(t *testing.T) {
+	testCases := []TestRoute{
+		// OAuth Authorizations
+		{
+			Name:    "GET /authorizations",
+			Method:  "GET",
+			Pattern: "/authorizations",
+		},
+		{
+			Name:    "GET /authorizations/{id}",
+			Method:  "GET",
+			Pattern: "/authorizations/{id}",
+		},
+		{
+			Name:    "POST /authorizations",
+			Method:  "POST",
+			Pattern: "/authorizations",
+		},
+		{
+			Name:    "PUT /authorizations/clients/{client_id}",
+			Method:  "PUT",
+			Pattern: "/authorizations/clients/{client_id}",
+		},
+		{
+			Name:    "PATCH /authorizations/{id}",
+			Method:  "PATCH",
+			Pattern: "/authorizations/{id}",
+		},
+		{
+			Name:    "DELETE /authorizations/{id}",
+			Method:  "DELETE",
+			Pattern: "/authorizations/{id}",
+		},
+		{
+			Name:    "GET /applications/{client_id}/tokens/{access_token}",
+			Method:  "GET",
+			Pattern: "/applications/{client_id}/tokens/{access_token}",
+		},
+		{
+			Name:    "DELETE /applications/{client_id}/tokens",
+			Method:  "DELETE",
+			Pattern: "/applications/{client_id}/tokens",
+		},
+		{
+			Name:    "DELETE /applications/{client_id}/tokens/{access_token}",
+			Method:  "DELETE",
+			Pattern: "/applications/{client_id}/tokens/{access_token}",
+		},
+
+		// Activity
+		{
+			Name:    "GET /events",
+			Method:  "GET",
+			Pattern: "/events",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/events",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/events",
+		},
+		{
+			Name:    "GET /networks/{owner}/{repo}/events",
+			Method:  "GET",
+			Pattern: "/networks/{owner}/{repo}/events",
+		},
+		{
+			Name:    "GET /orgs/{org}/events",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/events",
+		},
+		{
+			Name:    "GET /users/{user}/received_events",
+			Method:  "GET",
+			Pattern: "/users/{user}/received_events",
+		},
+		{
+			Name:    "GET /users/{user}/received_events/public",
+			Method:  "GET",
+			Pattern: "/users/{user}/received_events/public",
+		},
+		{
+			Name:    "GET /users/{user}/events",
+			Method:  "GET",
+			Pattern: "/users/{user}/events",
+		},
+		{
+			Name:    "GET /users/{user}/events/public",
+			Method:  "GET",
+			Pattern: "/users/{user}/events/public",
+		},
+		{
+			Name:    "GET /users/{user}/events/orgs/{org}",
+			Method:  "GET",
+			Pattern: "/users/{user}/events/orgs/{org}",
+		},
+		{
+			Name:    "GET /feeds",
+			Method:  "GET",
+			Pattern: "/feeds",
+		},
+		{
+			Name:    "GET /notifications",
+			Method:  "GET",
+			Pattern: "/notifications",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/notifications",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/notifications",
+		},
+		{
+			Name:    "PUT /notifications",
+			Method:  "PUT",
+			Pattern: "/notifications",
+		},
+		{
+			Name:    "PUT /repos/{owner}/{repo}/notifications",
+			Method:  "PUT",
+			Pattern: "/repos/{owner}/{repo}/notifications",
+		},
+		{
+			Name:    "GET /notifications/threads/{id}",
+			Method:  "GET",
+			Pattern: "/notifications/threads/{id}",
+		},
+		{
+			Name:    "PATCH /notifications/threads/{id}",
+			Method:  "PATCH",
+			Pattern: "/notifications/threads/{id}",
+		},
+		{
+			Name:    "GET /notifications/threads/{id}/subscription",
+			Method:  "GET",
+			Pattern: "/notifications/threads/{id}/subscription",
+		},
+		{
+			Name:    "PUT /notifications/threads/{id}/subscription",
+			Method:  "PUT",
+			Pattern: "/notifications/threads/{id}/subscription",
+		},
+		{
+			Name:    "DELETE /notifications/threads/{id}/subscription",
+			Method:  "DELETE",
+			Pattern: "/notifications/threads/{id}/subscription",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/stargazers",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/stargazers",
+		},
+		{
+			Name:    "GET /users/{user}/starred",
+			Method:  "GET",
+			Pattern: "/users/{user}/starred",
+		},
+		{
+			Name:    "GET /user/starred",
+			Method:  "GET",
+			Pattern: "/user/starred",
+		},
+		{
+			Name:    "GET /user/starred/{owner}/{repo}",
+			Method:  "GET",
+			Pattern: "/user/starred/{owner}/{repo}",
+		},
+		{
+			Name:    "PUT /user/starred/{owner}/{repo}",
+			Method:  "PUT",
+			Pattern: "/user/starred/{owner}/{repo}",
+		},
+		{
+			Name:    "DELETE /user/starred/{owner}/{repo}",
+			Method:  "DELETE",
+			Pattern: "/user/starred/{owner}/{repo}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/subscribers",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/subscribers",
+		},
+		{
+			Name:    "GET /users/{user}/subscriptions",
+			Method:  "GET",
+			Pattern: "/users/{user}/subscriptions",
+		},
+		{
+			Name:    "GET /user/subscriptions",
+			Method:  "GET",
+			Pattern: "/user/subscriptions",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/subscription",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/subscription",
+		},
+		{
+			Name:    "PUT /repos/{owner}/{repo}/subscription",
+			Method:  "PUT",
+			Pattern: "/repos/{owner}/{repo}/subscription",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/subscription",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/subscription",
+		},
+		{
+			Name:    "GET /user/subscriptions/{owner}/{repo}",
+			Method:  "GET",
+			Pattern: "/user/subscriptions/{owner}/{repo}",
+		},
+		{
+			Name:    "PUT /user/subscriptions/{owner}/{repo}",
+			Method:  "PUT",
+			Pattern: "/user/subscriptions/{owner}/{repo}",
+		},
+		{
+			Name:    "DELETE /user/subscriptions/{owner}/{repo}",
+			Method:  "DELETE",
+			Pattern: "/user/subscriptions/{owner}/{repo}",
+		},
+
+		// Gists
+		{
+			Name:    "GET /users/{user}/gists",
+			Method:  "GET",
+			Pattern: "/users/{user}/gists",
+		},
+		{
+			Name:    "GET /gists",
+			Method:  "GET",
+			Pattern: "/gists",
+		},
+		/*
+			// matches with 'GET /gists/{id}'
+			{
+				Name:    "GET /gists/public",
+				Method:  "GET",
+				Pattern: "/gists/public",
+			},
+			// matches with 'GET /gists/{id}'
+			{
+				Name:    "GET /gists/starred",
+				Method:  "GET",
+				Pattern: "/gists/starred",
+			},
+		*/
+		{
+			Name:    "GET /gists/{id}",
+			Method:  "GET",
+			Pattern: "/gists/{id}",
+		},
+		{
+			Name:    "POST /gists",
+			Method:  "POST",
+			Pattern: "/gists",
+		},
+		{
+			Name:    "PATCH /gists/{id}",
+			Method:  "PATCH",
+			Pattern: "/gists/{id}",
+		},
+		{
+			Name:    "PUT /gists/{id}/star",
+			Method:  "PUT",
+			Pattern: "/gists/{id}/star",
+		},
+		{
+			Name:    "DELETE /gists/{id}/star",
+			Method:  "DELETE",
+			Pattern: "/gists/{id}/star",
+		},
+		{
+			Name:    "GET /gists/{id}/star",
+			Method:  "GET",
+			Pattern: "/gists/{id}/star",
+		},
+		{
+			Name:    "POST /gists/{id}/forks",
+			Method:  "POST",
+			Pattern: "/gists/{id}/forks",
+		},
+		{
+			Name:    "DELETE /gists/{id}",
+			Method:  "DELETE",
+			Pattern: "/gists/{id}",
+		},
+
+		// Git Data
+		{
+			Name:    "GET /repos/{owner}/{repo}/git/blobs/{sha}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/git/blobs/{sha}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/git/blobs",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/git/blobs",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/git/commits/{sha}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/git/commits/{sha}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/git/commits",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/git/commits",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/git/refs/*ref",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/git/refs/*ref",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/git/refs",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/git/refs",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/git/refs",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/git/refs",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/git/refs/*ref",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/git/refs/*ref",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/git/refs/*ref",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/git/refs/*ref",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/git/tags/{sha}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/git/tags/{sha}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/git/tags",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/git/tags",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/git/trees/{sha}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/git/trees/{sha}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/git/trees",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/git/trees",
+		},
+
+		// Issues
+		{
+			Name:    "GET /issues",
+			Method:  "GET",
+			Pattern: "/issues",
+		},
+		{
+			Name:    "GET /user/issues",
+			Method:  "GET",
+			Pattern: "/user/issues",
+		},
+		{
+			Name:    "GET /orgs/{org}/issues",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/issues",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/issues",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/issues",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/issues/{number}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/issues",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/issues",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/issues/{number}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/assignees",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/assignees",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/assignees/{assignee}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/assignees/{assignee}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/issues/{number}/comments",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/comments",
+		},
+		/*
+			// matches with 'GET /repos/{owner}/{repo}/issues/{number}'
+			{
+				Name:    "GET /repos/{owner}/{repo}/issues/comments",
+				Method:  "GET",
+				Pattern: "/repos/{owner}/{repo}/issues/comments",
+			},
+			// matches with 'GET /repos/{owner}/{repo}/issues/{number}/comments'
+			{
+				Name:    "GET /repos/{owner}/{repo}/issues/comments/{id}",
+				Method:  "GET",
+				Pattern: "/repos/{owner}/{repo}/issues/comments/{id}",
+			},
+		*/
+		{
+			Name:    "POST /repos/{owner}/{repo}/issues/{number}/comments",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/comments",
+		},
+		/*
+				// matches with 'PATCH /repos/{owner}/{repo}/issues/{number}/'
+			{
+				Name:    "PATCH /repos/{owner}/{repo}/issues/comments/{id}",
+				Method:  "PATCH",
+				Pattern: "/repos/{owner}/{repo}/issues/comments/{id}",
+			},
+		*/
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/issues/comments/{id}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/issues/comments/{id}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/issues/{number}/events",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/events",
+		},
+		/*
+			// matches with 'GET /repos/{owner}/{repo}/issues/{number}'
+			{
+				Name:    "GET /repos/{owner}/{repo}/issues/events",
+				Method:  "GET",
+				Pattern: "/repos/{owner}/{repo}/issues/events",
+			},
+			// matches with 'GET /repos/{owner}/{repo}/issues/{number}/events'
+			{
+				Name:    "GET /repos/{owner}/{repo}/issues/events/{id}",
+				Method:  "GET",
+				Pattern: "/repos/{owner}/{repo}/issues/events/{id}",
+			},
+		*/
+		{
+			Name:    "GET /repos/{owner}/{repo}/labels",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/labels",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/labels/{Name}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/labels/{Name}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/labels",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/labels",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/labels/{Name}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/labels/{Name}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/labels/{Name}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/labels/{Name}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/issues/{number}/labels",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/labels",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/issues/{number}/labels",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/labels",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/issues/{number}/labels/{Name}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/labels/{Name}",
+		},
+		{
+			Name:    "PUT /repos/{owner}/{repo}/issues/{number}/labels",
+			Method:  "PUT",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/labels",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/issues/{number}/labels",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/issues/{number}/labels",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/milestones/{number}/labels",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/milestones/{number}/labels",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/milestones",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/milestones",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/milestones/{number}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/milestones/{number}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/milestones",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/milestones",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/milestones/{number}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/milestones/{number}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/milestones/{number}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/milestones/{number}",
+		},
+
+		// Miscellaneous
+		{
+			Name:    "GET /emojis",
+			Method:  "GET",
+			Pattern: "/emojis",
+		},
+		{
+			Name:    "GET /gitignore/templates",
+			Method:  "GET",
+			Pattern: "/gitignore/templates",
+		},
+		{
+			Name:    "GET /gitignore/templates/{Name}",
+			Method:  "GET",
+			Pattern: "/gitignore/templates/{Name}",
+		},
+		{
+			Name:    "POST /markdown",
+			Method:  "POST",
+			Pattern: "/markdown",
+		},
+		{
+			Name:    "POST /markdown/raw",
+			Method:  "POST",
+			Pattern: "/markdown/raw",
+		},
+		{
+			Name:    "GET /meta",
+			Method:  "GET",
+			Pattern: "/meta",
+		},
+		{
+			Name:    "GET /rate_limit",
+			Method:  "GET",
+			Pattern: "/rate_limit",
+		},
+
+		// Organizations
+		{
+			Name:    "GET /users/{user}/orgs",
+			Method:  "GET",
+			Pattern: "/users/{user}/orgs",
+		},
+		{
+			Name:    "GET /user/orgs",
+			Method:  "GET",
+			Pattern: "/user/orgs",
+		},
+		{
+			Name:    "GET /orgs/{org}",
+			Method:  "GET",
+			Pattern: "/orgs/{org}",
+		},
+		{
+			Name:    "PATCH /orgs/{org}",
+			Method:  "PATCH",
+			Pattern: "/orgs/{org}",
+		},
+		{
+			Name:    "GET /orgs/{org}/members",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/members",
+		},
+		{
+			Name:    "GET /orgs/{org}/members/{user}",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/members/{user}",
+		},
+		{
+			Name:    "DELETE /orgs/{org}/members/{user}",
+			Method:  "DELETE",
+			Pattern: "/orgs/{org}/members/{user}",
+		},
+		{
+			Name:    "GET /orgs/{org}/public_members",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/public_members",
+		},
+		{
+			Name:    "GET /orgs/{org}/public_members/{user}",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/public_members/{user}",
+		},
+		{
+			Name:    "PUT /orgs/{org}/public_members/{user}",
+			Method:  "PUT",
+			Pattern: "/orgs/{org}/public_members/{user}",
+		},
+		{
+			Name:    "DELETE /orgs/{org}/public_members/{user}",
+			Method:  "DELETE",
+			Pattern: "/orgs/{org}/public_members/{user}",
+		},
+		{
+			Name:    "GET /orgs/{org}/teams",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/teams",
+		},
+		{
+			Name:    "GET /teams/{id}",
+			Method:  "GET",
+			Pattern: "/teams/{id}",
+		},
+		{
+			Name:    "POST /orgs/{org}/teams",
+			Method:  "POST",
+			Pattern: "/orgs/{org}/teams",
+		},
+		{
+			Name:    "PATCH /teams/{id}",
+			Method:  "PATCH",
+			Pattern: "/teams/{id}",
+		},
+		{
+			Name:    "DELETE /teams/{id}",
+			Method:  "DELETE",
+			Pattern: "/teams/{id}",
+		},
+		{
+			Name:    "GET /teams/{id}/members",
+			Method:  "GET",
+			Pattern: "/teams/{id}/members",
+		},
+		{
+			Name:    "GET /teams/{id}/members/{user}",
+			Method:  "GET",
+			Pattern: "/teams/{id}/members/{user}",
+		},
+		{
+			Name:    "PUT /teams/{id}/members/{user}",
+			Method:  "PUT",
+			Pattern: "/teams/{id}/members/{user}",
+		},
+		{
+			Name:    "DELETE /teams/{id}/members/{user}",
+			Method:  "DELETE",
+			Pattern: "/teams/{id}/members/{user}",
+		},
+		{
+			Name:    "GET /teams/{id}/repos",
+			Method:  "GET",
+			Pattern: "/teams/{id}/repos",
+		},
+		{
+			Name:    "GET /teams/{id}/repos/{owner}/{repo}",
+			Method:  "GET",
+			Pattern: "/teams/{id}/repos/{owner}/{repo}",
+		},
+		{
+			Name:    "PUT /teams/{id}/repos/{owner}/{repo}",
+			Method:  "PUT",
+			Pattern: "/teams/{id}/repos/{owner}/{repo}",
+		},
+		{
+			Name:    "DELETE /teams/{id}/repos/{owner}/{repo}",
+			Method:  "DELETE",
+			Pattern: "/teams/{id}/repos/{owner}/{repo}",
+		},
+		{
+			Name:    "GET /user/teams",
+			Method:  "GET",
+			Pattern: "/user/teams",
+		},
+
+		// Pull Requests
+		{
+			Name:    "GET /repos/{owner}/{repo}/pulls",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/pulls",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/pulls/{number}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/pulls",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/pulls",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/pulls/{number}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/pulls/{number}/commits",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}/commits",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/pulls/{number}/files",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}/files",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/pulls/{number}/merge",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}/merge",
+		},
+		{
+			Name:    "PUT /repos/{owner}/{repo}/pulls/{number}/merge",
+			Method:  "PUT",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}/merge",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/pulls/{number}/comments",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}/comments",
+		},
+		/*
+			// matches with 'GET /repos/{owner}/{repo}/pulls/{number}'
+			{
+				Name:    "GET /repos/{owner}/{repo}/pulls/comments",
+				Method:  "GET",
+				Pattern: "/repos/{owner}/{repo}/pulls/comments",
+			},
+			// matches with 'GET /repos/{owner}/{repo}/pulls/{number}/comments'
+			{
+				Name:    "GET /repos/{owner}/{repo}/pulls/comments/{number}",
+				Method:  "GET",
+				Pattern: "/repos/{owner}/{repo}/pulls/comments/{number}",
+			},
+		*/
+		{
+			Name:    "PUT /repos/{owner}/{repo}/pulls/{number}/comments",
+			Method:  "PUT",
+			Pattern: "/repos/{owner}/{repo}/pulls/{number}/comments",
+		},
+		/*
+			{
+				Name:    "PATCH /repos/{owner}/{repo}/pulls/comments/{number}",
+				Method:  "PATCH",
+				Pattern: "/repos/{owner}/{repo}/pulls/comments/{number}",
+			},
+		*/
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/pulls/comments/{number}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/pulls/comments/{number}",
+		},
+
+		// Repositories
+		{
+			Name:    "GET /user/repos",
+			Method:  "GET",
+			Pattern: "/user/repos",
+		},
+		{
+			Name:    "GET /users/{user}/repos",
+			Method:  "GET",
+			Pattern: "/users/{user}/repos",
+		},
+		{
+			Name:    "GET /orgs/{org}/repos",
+			Method:  "GET",
+			Pattern: "/orgs/{org}/repos",
+		},
+		{
+			Name:    "GET /repositories",
+			Method:  "GET",
+			Pattern: "/repositories",
+		},
+		{
+			Name:    "POST /user/repos",
+			Method:  "POST",
+			Pattern: "/user/repos",
+		},
+		{
+			Name:    "POST /orgs/{org}/repos",
+			Method:  "POST",
+			Pattern: "/orgs/{org}/repos",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/contributors",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/contributors",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/languages",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/languages",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/teams",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/teams",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/tags",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/tags",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/branches",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/branches",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/branches/{branch}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/branches/{branch}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/collaborators",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/collaborators",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/collaborators/{user}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/collaborators/{user}",
+		},
+		{
+			Name:    "PUT /repos/{owner}/{repo}/collaborators/{user}",
+			Method:  "PUT",
+			Pattern: "/repos/{owner}/{repo}/collaborators/{user}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/collaborators/{user}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/collaborators/{user}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/comments",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/comments",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/commits/{sha}/comments",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/commits/{sha}/comments",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/commits/{sha}/comments",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/commits/{sha}/comments",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/comments/{id}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/comments/{id}",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/comments/{id}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/comments/{id}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/comments/{id}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/comments/{id}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/commits",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/commits",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/commits/{sha}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/commits/{sha}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/readme",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/readme",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/contents/*Path",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/contents/*Path",
+		},
+		{
+			Name:    "PUT /repos/{owner}/{repo}/contents/*Path",
+			Method:  "PUT",
+			Pattern: "/repos/{owner}/{repo}/contents/*Path",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/contents/*Path",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/contents/*Path",
+		},
+		/*
+			{
+				Name:    "GET /repos/{owner}/{repo}/{archive_format}/{ref}",
+				Method:  "GET",
+				Pattern: "/repos/{owner}/{repo}/{archive_format}/{ref}",
+			},
+		*/
+		{
+			Name:    "GET /repos/{owner}/{repo}/keys",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/keys",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/keys/{id}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/keys/{id}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/keys",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/keys",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/keys/{id}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/keys/{id}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/keys/{id}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/keys/{id}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/downloads",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/downloads",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/downloads/{id}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/downloads/{id}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/downloads/{id}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/downloads/{id}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/forks",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/forks",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/forks",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/forks",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/hooks",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/hooks",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/hooks/{id}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/hooks/{id}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/hooks",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/hooks",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/hooks/{id}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/hooks/{id}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/hooks/{id}/tests",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/hooks/{id}/tests",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/hooks/{id}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/hooks/{id}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/merges",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/merges",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/releases",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/releases",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/releases/{id}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/releases/{id}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/releases",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/releases",
+		},
+		{
+			Name:    "PATCH /repos/{owner}/{repo}/releases/{id}",
+			Method:  "PATCH",
+			Pattern: "/repos/{owner}/{repo}/releases/{id}",
+		},
+		{
+			Name:    "DELETE /repos/{owner}/{repo}/releases/{id}",
+			Method:  "DELETE",
+			Pattern: "/repos/{owner}/{repo}/releases/{id}",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/releases/{id}/assets",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/releases/{id}/assets",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/stats/contributors",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/stats/contributors",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/stats/commit_activity",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/stats/commit_activity",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/stats/code_frequency",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/stats/code_frequency",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/stats/participation",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/stats/participation",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/stats/punch_card",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/stats/punch_card",
+		},
+		{
+			Name:    "GET /repos/{owner}/{repo}/statuses/{ref}",
+			Method:  "GET",
+			Pattern: "/repos/{owner}/{repo}/statuses/{ref}",
+		},
+		{
+			Name:    "POST /repos/{owner}/{repo}/statuses/{ref}",
+			Method:  "POST",
+			Pattern: "/repos/{owner}/{repo}/statuses/{ref}",
+		},
+
+		// Search
+		{
+			Name:    "GET /search/repositories",
+			Method:  "GET",
+			Pattern: "/search/repositories",
+		},
+		{
+			Name:    "GET /search/code",
+			Method:  "GET",
+			Pattern: "/search/code",
+		},
+		{
+			Name:    "GET /search/issues",
+			Method:  "GET",
+			Pattern: "/search/issues",
+		},
+		{
+			Name:    "GET /search/users",
+			Method:  "GET",
+			Pattern: "/search/users",
+		},
+		{
+			Name:    "GET /legacy/issues/search/{owner}/{repository}/{state}/{keyword}",
+			Method:  "GET",
+			Pattern: "/legacy/issues/search/{owner}/{repository}/{state}/{keyword}",
+		},
+		{
+			Name:    "GET /legacy/repos/search/{keyword}",
+			Method:  "GET",
+			Pattern: "/legacy/repos/search/{keyword}",
+		},
+		{
+			Name:    "GET /legacy/user/search/{keyword}",
+			Method:  "GET",
+			Pattern: "/legacy/user/search/{keyword}",
+		},
+		{
+			Name:    "GET /legacy/user/email/{email}",
+			Method:  "GET",
+			Pattern: "/legacy/user/email/{email}",
+		},
+
+		// Users
+		{
+			Name:    "GET /users/{user}",
+			Method:  "GET",
+			Pattern: "/users/{user}",
+		},
+		{
+			Name:    "GET /user",
+			Method:  "GET",
+			Pattern: "/user",
+		},
+		{
+			Name:    "PATCH /user",
+			Method:  "PATCH",
+			Pattern: "/user",
+		},
+		{
+			Name:    "GET /users",
+			Method:  "GET",
+			Pattern: "/users",
+		},
+		{
+			Name:    "GET /user/emails",
+			Method:  "GET",
+			Pattern: "/user/emails",
+		},
+		{
+			Name:    "POST /user/emails",
+			Method:  "POST",
+			Pattern: "/user/emails",
+		},
+		{
+			Name:    "DELETE /user/emails",
+			Method:  "DELETE",
+			Pattern: "/user/emails",
+		},
+		{
+			Name:    "GET /users/{user}/followers",
+			Method:  "GET",
+			Pattern: "/users/{user}/followers",
+		},
+		{
+			Name:    "GET /user/followers",
+			Method:  "GET",
+			Pattern: "/user/followers",
+		},
+		{
+			Name:    "GET /users/{user}/following",
+			Method:  "GET",
+			Pattern: "/users/{user}/following",
+		},
+		{
+			Name:    "GET /user/following",
+			Method:  "GET",
+			Pattern: "/user/following",
+		},
+		{
+			Name:    "GET /user/following/{user}",
+			Method:  "GET",
+			Pattern: "/user/following/{user}",
+		},
+		{
+			Name:    "GET /users/{user}/following/{target_user}",
+			Method:  "GET",
+			Pattern: "/users/{user}/following/{target_user}",
+		},
+		{
+			Name:    "PUT /user/following/{user}",
+			Method:  "PUT",
+			Pattern: "/user/following/{user}",
+		},
+		{
+			Name:    "DELETE /user/following/{user}",
+			Method:  "DELETE",
+			Pattern: "/user/following/{user}",
+		},
+		{
+			Name:    "GET /users/{user}/keys",
+			Method:  "GET",
+			Pattern: "/users/{user}/keys",
+		},
+		{
+			Name:    "GET /user/keys",
+			Method:  "GET",
+			Pattern: "/user/keys",
+		},
+		{
+			Name:    "GET /user/keys/{id}",
+			Method:  "GET",
+			Pattern: "/user/keys/{id}",
+		},
+		{
+			Name:    "POST /user/keys",
+			Method:  "POST",
+			Pattern: "/user/keys",
+		},
+		{
+			Name:    "PATCH /user/keys/{id}",
+			Method:  "PATCH",
+			Pattern: "/user/keys/{id}",
+		},
+		{
+			Name:    "DELETE /user/keys/{id}",
+			Method:  "DELETE",
+			Pattern: "/user/keys/{id}",
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		router := setupRouter(testCases)
+
+		seed := fmt.Sprintf("github:%d", time.Now().UnixNano())
+
+		t.Run(tc.Name, validate(tc, seed, router))
+	}
+}
+
 func setupRouter(testRoutes []TestRoute) http.Handler {
 	router := NewRouter()
 
