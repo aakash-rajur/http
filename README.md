@@ -7,7 +7,7 @@
 
 ## goal
 
-1. provide minimum surface area for functioning http library
+1. provide minimum surface area for functioning a http library
 2. understanding the underlying mechanisms of http routing
 3. evaluate alternative approaches to various existing solutions
 4. provide model for custom http routines
@@ -95,8 +95,6 @@ router.Use(
 )
 ```
 
-
-
 ### logging
 ```go
 import (
@@ -168,3 +166,32 @@ router.GetFunc(
 {"timestamp":"2024-01-07T14:34:20.871688+05:30","status_code":200,"latency":146875,"client_ip":"127.0.0.1","method":"GET","path":"/api/v2/books","query":{},"request_content_type":"text/plain","request_content_encoding":"identity","response_content_type":"application/json","response_content_encoding":"identity","protocol_version":2}
 {"timestamp":"2024-01-07T14:34:23.677465+05:30","status_code":200,"latency":29875,"client_ip":"127.0.0.1","method":"GET","path":"/api/v2/books","query":{},"request_content_type":"text/plain","request_content_encoding":"identity","response_content_type":"application/json","response_content_encoding":"identity","protocol_version":2}
 ```
+
+## mechanism
+
+> search for incoming path in a pre-sorted list of registered routes using binary search costing O(log n) time
+> where n is the number of registered routes
+
+### registration
+1. while registering we've always receive a path pattern and a method (along with handler).
+2. create a new pattern of form `/method/pattern` and run sanity through the same.
+3. split the pattern into segments (array of strings)
+4. append segments to a list of segments
+5. sort this list of segments with static segments taking precedence over path params.
+
+### matching
+1. prepend the method to the incoming path and run sanity through the same.
+2. split the path into segments (array of strings)
+3. search for the segments in the list of segments using binary search.
+4. path params are matched to true for all values in that corresponding segment position.
+
+## alternatives
+
+### trie
+1. a tree like data structure that is used to store strings.
+2. more difficult to implement than a simple list of segments.
+3. similar runtime complexity as a list of segments O(log n) where n is the number of registered routes.
+
+### linear search
+1. search for incoming path in a list of registered routes.
+2. runtime complexity of O(n) where n is the number of registered routes.
